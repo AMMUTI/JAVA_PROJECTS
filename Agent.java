@@ -78,17 +78,39 @@ public static void agent() throws SQLException
 			{
 			case 1:
 			
+				
+				//print the id and name
+				System.out.printf("Id\tProduct Name\t\t\n\n");
+				ResultSet r = null;
+			    r = statement.executeQuery("select * from admin ");
+				int qs=0;
+			    while(r.next())
+				{
+					int k=r.getInt("Product_id");
+					System.out.printf("%d\t",+k);
+					
+					String name=r.getString("product_name");
+					System.out.print(name+"\t\t");
+					System.out.println("\n");
+					 qs=r.getInt("Quantity");
+					
+				}
+				int pri=0,q=0;
+				int pro_id=0;
 			System.out.println("Enter the Product Id :");
 			int id=sc.nextInt();
 			System.out.println("Do you want to Buy Or Sell ?:");
 			String ans=sc.next();
+			if(ans.equalsIgnoreCase("buy")) 
+			
+			{
 			System.out.println("Product Name\t Product Price \n");
 			
 			//code for print the name and price of product
 			String name = null;
-			int pri=0,q=0;
+			
 			ResultSet np = null;
-		    np = statement.executeQuery("select Product_name,price,Quantity from admin where Product_id='"+id+"' ");
+		    np = statement.executeQuery("select  Product_name,price,Quantity from admin where Product_id='"+id+"' ");
 			while(np.next())
 			{
 				name=np.getString("Product_name");
@@ -99,6 +121,7 @@ public static void agent() throws SQLException
 				System.out.print("\t"+pri+"\t");
 				System.out.println("\n");
 				q=np.getInt("Quantity");
+				pro_id=id;
 				
 			}
 		    //calculating the product availability for buy
@@ -111,18 +134,27 @@ public static void agent() throws SQLException
 			      break;
 				}
 			else
-			{
+			{int lessq=q-quntity;
 				int total=quntity*pri;
 				System.out.println("Total price : "+total);
 				System.out.println("Do you want to confirm Booking ?");
 				String book=sc.next();
 				  if(book.equalsIgnoreCase("yes"))
-					  statement.executeUpdate("UPDATE `agent` SET `total_price`='"+total+"' where Product_id='"+id+"' ");
-					  
-					  
-				
+				  
+					  {statement.executeUpdate("INSERT INTO agent(`transaction`,`product_id`,`Product_name`, `price`,`total_price`) VALUES('"+ans+"','"+pro_id+"','"+name+"','"+pri+"','"+total+"')");
+					  statement.executeUpdate("UPDATE `admin` SET `Quantity`='"+lessq+"' where Product_id='"+pro_id+"' ");
+					  System.out.println("Thank youfor shoping...");
+					  }
+			}//statement.executeUpdate("UPDATE `agent` SET `total_price`='"+total+"' where Product_id='"+id+"' ");
 			}
-			
+			else
+			{
+				System.out.println("Enter the Quantity of the product : \n");
+				int quntity=sc.nextInt();
+				int diffq=qs+quntity;
+				statement.executeUpdate("UPDATE `admin` SET `Quantity`='"+diffq+"' where Product_id='"+id+"' ");
+				System.out.println("prodect added success fully");
+			}
 			break;
 			case 2:
 				System.out.println("display");
@@ -138,8 +170,7 @@ public static void agent() throws SQLException
 					String names=rs.getString("product_name");
 					System.out.print(names+"\t\t");
 					
-					//int qu=rs.getInt("Quantity");
-					//System.out.print("  "+qu+"\t");
+					
 					 pri=rs.getInt("total_price");
 					
 					System.out.print("\t"+pri+"\t");
@@ -149,6 +180,7 @@ public static void agent() throws SQLException
 				}					
 				break;
 			case 3:First l=new First();
+			       System.out.println("Thank you!! ");
 			       l.main(null);
 			      
 				break;
